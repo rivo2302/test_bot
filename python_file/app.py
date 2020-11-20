@@ -5,7 +5,8 @@ from flask import Flask, request
 import json
 
 from pers import verify_token
-
+from lyrics import *
+from send import envoyer
 app=Flask (__name__)    
 @app.route('/',methods=['GET']) 
 def get_data():
@@ -25,14 +26,15 @@ def recevoir_message():
                 sender_id = messaging_event["sender"]["id"]         
                 if messaging_event.get("message"):                                                                               
                     try:
-                        message_text = messaging_event["message"]["text"]                    
-                        print(message_text,sender_id)
-                    except KeyError:        
-                        message_text=None  
-                        print("tsy nety ")                                      
+                        message_text = messaging_event["message"]["text"]
+                        print(message_text)
+                        donnee=json.dumps(get_results(message_text,sender_id))
+                        envoyer(donnee)
+                    except KeyError:
+                        message_text=None
+                                             
     else :
         print("reçu^mais il y avait un bug")          
     return "ok"
-
 if __name__ == "__main__":  
     app.run(debug="True")
